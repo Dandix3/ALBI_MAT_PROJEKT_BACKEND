@@ -1,0 +1,25 @@
+### Log in first
+POST {{host}}/auth/login?email={{email}}&password={{password}}
+Accept: application/json
+Cache-Control: no-cache
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+   client.global.set("token", response.body["data"]);
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Search for GLT
+GET {{host}}/game-achievements/87585
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
