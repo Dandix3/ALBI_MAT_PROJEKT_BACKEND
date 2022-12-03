@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserFriendController;
 use App\Http\Controllers\UserGamesController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,28 +20,92 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
-    // Auth
-    Route::post(AuthController::getEndpointUrl() . '/register', [AuthController::class, 'register']);
-    Route::post(AuthController::getEndpointUrl() . '/login', [AuthController::class, 'login'])->name('login');
+
+    /**
+     * Auth endpoints
+     */
+    $endPoint = AuthController::getEndpointUrl();
+    $controller = AuthController::class;
+
+    Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+        Route::post('/register', [$controller, 'register'])->name($endPoint . '.register');
+        Route::post('/login', [$controller, 'login'])->name('login');
+    });
 
 
     Route::middleware('auth:sanctum')->group(function () {
-        // Game
-        Route::get(GameController::getEndpointUrl() . '/scan', [GameController::class, 'scanGame']);
 
-        // Auth
-        Route::post(AuthController::getEndpointUrl() . '/logout', [AuthController::class, 'logout']);
+        /**
+         * Auth endpoints
+         */
+        $endPoint = AuthController::getEndpointUrl();
+        $controller = AuthController::class;
 
-        // User
-        Route::get(UserController::getEndpointUrl(), [UserController::class, 'users']);
-        Route::get(UserController::getEndpointUrl() . '/user', [UserController::class, 'user']);
-        Route::get(UserController::getEndpointUrl() . '/{id}', [UserController::class, 'getUser']);
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::post('/logout', [$controller, 'logout'])->name($endPoint . '.logout');
+        });
 
-        // UserGames
-        Route::get(UserGamesController::getEndpointUrl(), [UserGamesController::class, 'getUsersGames']);
 
-        // Game Achievements
-        Route::put(AchievementController::getEndpointUrl() . '/{id}', [AchievementController::class, 'updateUserAchievement']);
+        /**
+         * Game endpoints
+         */
+        $endPoint = GameController::getEndpointUrl();
+        $controller = GameController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/scan', [$controller, 'scanGame'])->name($endPoint . '.scan');
+        });
+
+
+        /**
+         * Game endpoints
+         */
+        $endPoint = UserController::getEndpointUrl();
+        $controller = UserController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/', [$controller, 'users']);
+            Route::get('/user', [$controller, 'user']);
+            Route::get('/{id}', [$controller, 'getUser']);
+        });
+
+
+        /**
+         * UserGame endpoints
+         */
+        $endPoint = UserGamesController::getEndpointUrl();
+        $controller = UserGamesController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/', [$controller, 'getUsersGames']);
+        });
+
+
+        /**
+         * Achievements endpoints
+         */
+        $endPoint = AchievementController::getEndpointUrl();
+        $controller = AchievementController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::put('/{id}', [$controller, 'updateUserAchievement'])->name($endPoint . '.update');
+        });
+
+
+        /**
+         * User Friends endpoints
+         */
+        $endPoint = UserFriendController::getEndpointUrl();
+        $controller = UserFriendController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/', [$controller, 'getFriends'])->name($endPoint. '.friends');
+            Route::post('/add', [$controller, 'addFriend'])->name($endPoint. '.add');
+            Route::post('/remove', [$controller, 'removeFriend'])->name($endPoint. '.remove');
+            Route::get('/requests', [$controller, 'getFriendRequests'])->name($endPoint. '.requests');
+            Route::post('/accept', [$controller, 'acceptFriendRequest'])->name($endPoint. '.accept');
+            Route::post('/decline', [$controller, 'declineFriendRequest'])->name($endPoint. '.decline');
+        });
 
     });
 
