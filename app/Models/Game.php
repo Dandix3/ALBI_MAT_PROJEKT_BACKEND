@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -16,8 +18,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $klp
  * @property \DateTime $release_date
  * @property string $cap
- * @property \Illuminate\Database\Eloquent\Collection $games
- * @method static \Illuminate\Database\Eloquent\Builder|Game whereKsp($value)
+ * @property Collection $games
+ * @method static Builder|Game whereKsp($value)
  */
 class Game extends Authenticatable
 {

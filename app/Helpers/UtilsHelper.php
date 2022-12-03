@@ -104,7 +104,7 @@ class UtilsHelper {
 
     public static function unauthorizedResponseJson() {
         Log::debug('Returning Unauthorized: 401');
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return self::getResponse('Unauthorized', 401);
     }
 
     public static function permissionDeniedResponseJson(?Exception $exception) {
@@ -113,23 +113,23 @@ class UtilsHelper {
         } else {
             $message = 'Permission denied';
         }
-        return response()->json(['error' => $message], 403);
+        return self::getResponse($message, 403);
     }
 
     public static function notFoundResponseJson($message = 'Not found') {
-        return response()->json(['error' => $message], 404);
+        return self::getResponse($message, 404);
     }
 
     public static function userAlreadyHasGameResponseJson($message = 'Už tuto hru přidanou máte') {
-        return response()->json(['error' => $message], 409);
+        return self::getResponse('Už tuto hru máte přidanou.', 409);
     }
 
     public static function duplicateObjectJson() {
-        return response()->json(['error' => 'Item already exists'], 409);
+        return self::getResponse('Duplicate object', 409);
     }
 
     public static function notImplementedResponseJson() {
-        return response()->json(['error' => 'Not implemented'], 501);
+        return self::getResponse('Not implemented', 501);
     }
 
     public static function validationErrorResponseJson(Exception $msg) {
@@ -137,7 +137,14 @@ class UtilsHelper {
         $err["validation_exception"] = (new \ReflectionClass($msg))->getShortName();
         $err["additional_data"] = $msg->getAdditionalData();
 
-        return response()->json($err, 400);
+        return self::getResponse($err, 400);
+    }
+
+    protected static function getResponse($mess, $code) {
+        return response()->json([
+            'status' => false,
+            'message' => $mess
+        ], $code);
     }
 
     /**

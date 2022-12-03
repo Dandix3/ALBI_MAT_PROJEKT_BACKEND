@@ -5,7 +5,6 @@ namespace App\Models\Services;
 use App\Exceptions\NotFoundException;
 use App\Models\Game;
 use App\Models\Repositories\GameRepository;
-use Illuminate\Support\Facades\Auth;
 use Nette\Schema\ValidationException;
 
 class GameService
@@ -35,10 +34,9 @@ class GameService
             throw new NotFoundException("Hra nebyla nalezena");
         }
 
-//        if ($result->count() > 1) {
-//            throw new NotFoundException("Hra byla nalezena vícekrát");
-//        }
-        $result = $result->first();
+        if ($result->count() > 1) {
+            throw new NotFoundException("Hra byla nalezena vícekrát");
+        }
         $this->userGamesService->setGameToUser($result);
 
         return $result;

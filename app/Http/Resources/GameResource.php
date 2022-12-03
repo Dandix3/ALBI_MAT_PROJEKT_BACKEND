@@ -22,7 +22,7 @@ class GameResource extends JsonResource
             'release_date' => $this->release_date ?? $this->game->release_date,
             'klp' => $this->klp ?? $this->game->klp,
             'cap' => $this->cap ?? $this->game->cap,
-            'achievements' => $this->whenLoaded('achievements', AchievementResource::collection($this->achievements)),
+            'achievements' => AchievementResource::collection($this->game->achievements ?? $this->achievements),
         ];
     }
 }

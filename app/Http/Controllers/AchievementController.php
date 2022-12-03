@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\GetGameRequest;
+use App\Http\Requests\PutUserAchievementRequest;
 use App\Http\Resources\AchievementResource;
 use App\Http\Resources\GameResource;
 use App\Models\Services\AchievementService;
@@ -24,17 +25,13 @@ class AchievementController extends Controller
         $this->gameAchievementsService = new AchievementService();
     }
 
-    /**
-     * @throws NotFoundException
-     */
-    public function getGameAchievements(int $id): JsonResponse
+    public function updateUserAchievement($achievementId, PutUserAchievementRequest $request): JsonResponse
     {
-        $gameAchievements = $this->gameAchievementsService->getGameAchievements($id);
-
+        $requestVal = $request->validated();
+        $this->gameAchievementsService->updateUserAchievement($achievementId, $requestVal['points']);
         return response()->json([
             'status' => true,
-            'message' => 'Game Achievements',
-            'data' => AchievementResource::collection($gameAchievements)
+            'message' => 'Úspěchy byly úspěšně aktualizovány.'
         ]);
     }
 }

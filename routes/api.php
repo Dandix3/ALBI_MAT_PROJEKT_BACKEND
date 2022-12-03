@@ -40,8 +40,7 @@ Route::prefix('v1')->group(function () {
         Route::get(UserGamesController::getEndpointUrl(), [UserGamesController::class, 'getUsersGames']);
 
         // Game Achievements
-        Route::get(AchievementController::getEndpointUrl() . '/{id}', [AchievementController::class, 'getGameAchievements']);
-        Route::put(AchievementController::getEndpointUrl() . '/{id}', [AchievementController::class, 'updateGameAchievements']);
+        Route::put(AchievementController::getEndpointUrl() . '/{id}', [AchievementController::class, 'updateUserAchievement']);
 
     });
 

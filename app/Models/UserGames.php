@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use DateTime;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,11 +19,12 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $name
  * @property int $EAN
  * @property string $klp
- * @property \DateTime $release_date
+ * @property DateTime $release_date
  * @property string $cap
- * @property \Illuminate\Database\Eloquent\Collection $games
- * @property \Illuminate\Database\Eloquent\Collection $users
- * @method static \Illuminate\Database\Eloquent\Builder|Game whereUserId($value)
+ * @property Collection $games
+ * @property Collection $users
+ * @method static Builder|Game whereUserId($value)
+ * @method static Builder|Game whereGameId($value)
  */
 class UserGames extends Authenticatable
 {

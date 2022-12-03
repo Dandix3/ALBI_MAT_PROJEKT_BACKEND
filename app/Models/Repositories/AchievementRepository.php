@@ -2,14 +2,18 @@
 
 namespace App\Models\Repositories;
 
-use App\Models\Game;
+use App\Models\Achievement;
+use Illuminate\Database\Query\Builder;
 
 class AchievementRepository
 {
-    public function getGameAchievements($gameId)
+    /**
+     * @param int $gameId
+     * @return Builder|Achievement
+     */
+    public function getGameAchievements(int $gameId): Builder|Achievement
     {
-        $game = Game::find($gameId);
-        //        $gameAchievements = $gameAchievements->sortBy('order');
-        return $game->achievements;
+        return Achievement::whereGameId($gameId);
     }
+
 }

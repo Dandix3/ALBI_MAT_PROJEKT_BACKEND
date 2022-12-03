@@ -4,6 +4,8 @@ namespace App\Models\Services;
 
 use App\Models\Repositories\UserRepository;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Nette\Schema\ValidationException;
@@ -21,11 +23,15 @@ class UserService
     /**
      * @return User
      */
-    public function getUser(): \Illuminate\Contracts\Auth\Authenticatable
+    public function getUser(): Authenticatable
     {
         return Auth::user();
     }
 
+    /**
+     * @param int|null $id
+     * @return User
+     */
     public function getUserById(int $id = null): User
     {
         if ($id === null) {
@@ -40,7 +46,10 @@ class UserService
         return $result;
     }
 
-    public function getAllUsers(): \Illuminate\Database\Eloquent\Collection
+    /**
+     * @return Collection
+     */
+    public function getAllUsers(): Collection
     {
         return $this->userRepository->getAllUsers();
     }

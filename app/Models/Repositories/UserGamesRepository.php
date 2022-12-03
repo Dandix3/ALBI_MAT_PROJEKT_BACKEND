@@ -4,48 +4,30 @@ namespace App\Models\Repositories;
 
 use App\Models\Game;
 use App\Models\UserGames;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class UserGamesRepository
 {
-    public function setGameToUser(Game $game): void
+    /**
+     * @param int $userId
+     * @return Builder|Game
+     */
+    public function getAllGamesFromUser(int $userId): Game|Builder
     {
-        try {
-            UserGames::create([
-                'user_id' => Auth::user()->id,
-                'game_id' => $game->ksp,
-            ]);
-
-        } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
-        }
+        return UserGames::whereUserId($userId);
     }
 
-    public function getGameFromUser(Game $game): void
-    {
-    }
-
-    public function getAllGamesFromUser()
-    {
-        return UserGames::whereUserId(Auth::user()->id);
-    }
-
+    /**
+     * @param Game $game
+     * @return bool
+     */
     public function checkGameInUserGames(Game $game): bool
     {
-        try {
-            $result = UserGames::whereUserId(Auth::user()->id)->whereGameId($game->ksp)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return false;
+        $userGame = UserGames::whereUserId(Auth::user()->id)->whereGameId($game->ksp)->first();
+        if ($userGame) {
+            return true;
         }
-        return true;
-    }
-
-    public function deleteGameFromUser(Game $game): void
-    {
-    }
-
-    public function deleteAllGamesFromUser(): void
-    {
+        return false;
     }
 }

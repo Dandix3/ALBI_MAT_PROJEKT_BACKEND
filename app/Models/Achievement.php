@@ -17,7 +17,9 @@ use Laravel\Sanctum\HasApiTokens;
  * @property \DateTime $release_date
  * @property string $cap
  * @property \Illuminate\Database\Eloquent\Collection $games
- *
+ * @property \Illuminate\Database\Eloquent\Collection $users
+ * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Achievement whereGameId($value)
  */
 class Achievement extends Authenticatable
 {
