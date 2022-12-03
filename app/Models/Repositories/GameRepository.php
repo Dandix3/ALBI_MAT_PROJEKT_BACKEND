@@ -6,7 +6,11 @@ use App\Models\Game;
 
 class GameRepository
 {
-    public function getGameByEAN($ean)
+    /**
+     * @param int $ean
+     * @return Game
+     */
+    public function getGameByEAN(int $ean): Game
     {
         return Game::where('EAN', $ean)->first();
     }
