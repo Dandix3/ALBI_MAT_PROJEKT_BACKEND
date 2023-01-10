@@ -18,6 +18,7 @@ class AchievementResource extends JsonResource
         return [
             'id' => $this->id,
             'game_id' => $this->game_id,
+            'game_name' => $this->game->name,
             'title' => $this->title,
             'description' => $this->description,
             'min_points' => $this->min_points,

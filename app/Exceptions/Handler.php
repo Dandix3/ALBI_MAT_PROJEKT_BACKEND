@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Throwable;
 
@@ -95,6 +96,11 @@ class Handler extends ExceptionHandler
             return UtilsHelper::notFoundResponseJson($exception->getMessage());
         }
 
+        // MODEL NOT FOUND
+        if ($exception instanceof ModelNotFoundException) {
+            return UtilsHelper::modelNotFoundException($exception->getMessage());
+        }
+
         // VALIDATION
         if ($exception instanceof ValidatorException) {
             return UtilsHelper::validationErrorResponseJson($exception);
@@ -102,6 +108,10 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof UserAlreadyHasGameException) {
             return UtilsHelper::userAlreadyHasGameResponseJson($exception);
+        }
+
+        if ($exception instanceof ModelDuplicateFoundException) {
+            return UtilsHelper::modelDuplicateFoundException($exception);
         }
 
         if ($exception instanceof MethodNotAllowedHttpException) {
@@ -121,6 +131,10 @@ class Handler extends ExceptionHandler
         // basic auth exceptions
         if ($exception instanceof UnauthorizedHttpException || $exception instanceof MaintenanceModeException) {
             return parent::render($request, $exception);
+        }
+
+        if ($exception instanceof NotFoundHttpException) {
+            return UtilsHelper::notFoundResponseJson();
         }
 
         /**

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -15,10 +14,12 @@ use Laravel\Sanctum\HasApiTokens;
  * @property int $id
  * @property int $user_id
  * @property int $friend_id
+ * @property bool $accepted
  * @property \Illuminate\Database\Eloquent\Collection $users
  * @method static \Illuminate\Database\Eloquent\Builder|UserFriend whereFriendId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserFriend whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|UserFriend whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|UserFriend whereAccepted($value)
  */
 class UserFriend extends Authenticatable
 {

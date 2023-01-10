@@ -18,6 +18,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('achievement_id')->constrained('achievements');
             $table->integer('points');
+            // todo: zatím dočasně
+            $table->integer('prev_state')->default(null)->nullable();
+            $table->integer('new_state')->default(null)->nullable();
+            $table->json('friendsToCheck')->default(null)->nullable();
+
             $table->foreignId('status_id')->constrained('user_achievements_status');
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -75,14 +76,14 @@ class UserAchievement extends Authenticatable
     protected $hidden = [];
 
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function achievement()
+    public function achievement(): BelongsTo
     {
-        return $this->belongsTo(Achievement::class);
+        return $this->belongsTo(Achievement::class, 'achievement_id', 'id');
     }
 
     public function isFinalStatus(): bool
@@ -96,6 +97,33 @@ class UserAchievement extends Authenticatable
             return;
         }
         $this->status_id = self::STATUS_WAITING_FOR_CHECK;
+        $this->save();
+    }
+
+    public function setAcceptedStatus(): void
+    {
+        if ($this->isFinalStatus()) {
+            return;
+        }
+        $this->status_id = self::STATUS_ACCEPTED;
+        $this->save();
+    }
+
+    public function setRejectedStatus(): void
+    {
+        if ($this->isFinalStatus()) {
+            return;
+        }
+        $this->status_id = self::STATUS_REJECTED;
+        $this->save();
+    }
+
+    public function setCompletedStatus()
+    {
+        if ($this->isFinalStatus()) {
+            return;
+        }
+        $this->status_id = self::STATUS_COMPLETED;
         $this->save();
     }
 }

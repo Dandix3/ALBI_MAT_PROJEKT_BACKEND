@@ -12,7 +12,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ### Search for userGames
-GET {{host}}/userGames
+GET {{host}}/user-games
 Accept: application/json
 Cache-Control: no-cache
 Authorization: Bearer {{token}}

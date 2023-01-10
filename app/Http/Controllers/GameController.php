@@ -36,4 +36,14 @@ class GameController extends Controller
             'data' => new GameResource($game)
         ]);
     }
+
+    public function addGame($ksp): JsonResponse
+    {
+        $game = $this->gameService->addGame($ksp);
+        return response()->json([
+            'status' => true,
+            'message' => 'Hra přidána',
+            'data' => GameResource::make($game),
+        ]);
+    }
 }

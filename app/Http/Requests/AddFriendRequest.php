@@ -7,22 +7,21 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 use Illuminate\Contracts\Validation\Validator;
 
-class PutUserAchievementRequest extends AbstractGetRequest
+class AddFriendRequest extends AbstractGetRequest
 {
     public function rules(): array
     {
         return [
-            'points' => 'required|integer|min:0',
-            'friend_ids' => 'string|nullable',
+            'friend_id' => ['required', 'integer', Rule::exists('users', 'id')],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'points.required' => 'Počet bodů je povinný.',
-            'points.integer' => 'Počet bodů musí být celé číslo.',
-            'points.min' => 'Počet bodů musí být kladné číslo.',
+            'friend_id.required' => 'Je vyžadováno ID přítele',
+            'friend_id.integer' => 'ID přítele musí být celé číslo',
+            'friend_id.exists' => 'ID přítele neexistuje',
         ];
     }
 

@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 
 class UserGamesController extends Controller
 {
-    const ENDPOINT = "userGames";
+    const ENDPOINT = "user-games";
 
     public static function getEndpointUrl(): string {
         return self::ENDPOINT;

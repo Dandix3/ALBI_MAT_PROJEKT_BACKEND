@@ -2,6 +2,7 @@
 
 namespace App\Models\Services;
 
+use App\Exceptions\ModelDuplicateFoundException;
 use App\Exceptions\NotFoundException;
 use App\Models\Game;
 use App\Models\Repositories\GameRepository;
@@ -22,6 +23,7 @@ class GameService
      * @param string|null $ean
      * @return Game
      * @throws NotFoundException
+     * @throws ModelDuplicateFoundException
      */
     public function scannedGame(string $ean = null): Game
     {
@@ -35,10 +37,17 @@ class GameService
         }
 
         if ($result->count() > 1) {
-            throw new NotFoundException("Hra byla nalezena vícekrát");
+            throw new ModelDuplicateFoundException("Hra byla nalezena vícekrát, zadejte další kód");
         }
-        $this->userGamesService->setGameToUser($result);
+        //$this->userGamesService->setGameToUser($result->first());
 
-        return $result;
+        return $result->first();
+    }
+
+    public function addGame($ksp): Game
+    {
+        $game = $this->gameRepository->getGameByKSP($ksp);
+        $this->userGamesService->setGameToUser($game);
+        return $game;
     }
 }

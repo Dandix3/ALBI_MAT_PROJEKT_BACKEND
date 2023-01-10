@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AchievementActionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\GameController;
@@ -33,6 +34,17 @@ Route::prefix('v1')->group(function () {
     });
 
 
+    /**
+     * User endpoints
+     */
+    $endPoint = UserController::getEndpointUrl();
+    $controller = UserController::class;
+
+    Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+        Route::get('/nickname/{nickname}', [$controller, 'findUserByNickname'])->name($endPoint . '.nickname');
+    });
+
+
     Route::middleware('auth:sanctum')->group(function () {
 
         /**
@@ -54,11 +66,12 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
             Route::get('/scan', [$controller, 'scanGame'])->name($endPoint . '.scan');
+            Route::post('/add/{id}', [$controller, 'addGame'])->name($endPoint . '.add');
         });
 
 
         /**
-         * Game endpoints
+         * User endpoints
          */
         $endPoint = UserController::getEndpointUrl();
         $controller = UserController::class;
@@ -100,11 +113,24 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
             Route::get('/', [$controller, 'getFriends'])->name($endPoint. '.friends');
-            Route::post('/add', [$controller, 'addFriend'])->name($endPoint. '.add');
-            Route::post('/remove', [$controller, 'removeFriend'])->name($endPoint. '.remove');
+            Route::post('/add/{id}', [$controller, 'addFriend'])->name($endPoint. '.add');
+            Route::post('/remove/{id}', [$controller, 'removeFriend'])->name($endPoint. '.remove');
             Route::get('/requests', [$controller, 'getFriendRequests'])->name($endPoint. '.requests');
-            Route::post('/accept', [$controller, 'acceptFriendRequest'])->name($endPoint. '.accept');
-            Route::post('/decline', [$controller, 'declineFriendRequest'])->name($endPoint. '.decline');
+            Route::post('/accept/{id}', [$controller, 'acceptFriendRequest'])->name($endPoint. '.accept');
+            Route::post('/decline/{id}', [$controller, 'declineFriendRequest'])->name($endPoint. '.decline');
+        });
+
+
+        /**
+         * User Friends endpoints
+         */
+        $endPoint = AchievementActionController::getEndpointUrl();
+        $controller = AchievementActionController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/', [$controller, 'getAchievementActions'])->name($endPoint. '.actions');
+            Route::post('/ack/{id}', [$controller, 'ackUserAchievement'])->name($endPoint. '.ack');
+            Route::post('/reject/{id}', [$controller, 'rejectUserAchievement'])->name($endPoint. '.reject');
         });
 
     });

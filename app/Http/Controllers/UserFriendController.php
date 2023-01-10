@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
+use App\Exceptions\ModelNotFoundException;
+use App\Http\Resources\UserFriendResource;
 use App\Models\Services\UserFriendService;
-use App\Models\Services\UserService;
 use Illuminate\Http\JsonResponse;
 
 class UserFriendController extends Controller
@@ -22,59 +22,93 @@ class UserFriendController extends Controller
         $this->userFriendService = new UserFriendService();
     }
 
-    public function friends(): JsonResponse
+    public function getFriends(): JsonResponse
     {
         $friends = $this->userFriendService->getFriends();
         return response()->json([
             'status' => true,
             'message' => 'Přátelé uživatele.',
-            'data' => UserResource::collection($friends)
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 
-    public function friendRequests(): JsonResponse
+    public function getFriendRequests(): JsonResponse
     {
         $friendRequests = $this->userFriendService->getFriendRequests();
         return response()->json([
             'status' => true,
             'message' => 'Žádosti o přátelství uživatelů.',
-            'data' => UserResource::collection($friendRequests)
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 
     public function addFriend(int $friendId): JsonResponse
     {
-        $success = $this->userFriendService->addFriend($friendId);
+        $friends = $this->userFriendService->addFriend($friendId);
         return response()->json([
-            'status' => $success,
-            'message' => $success ? 'Žádost o přátelství odeslána.' : 'Žádost o přátelství se nezdařila.',
+            'status' => true,
+            'message' => 'Žádost o přátelství byla odeslána.',
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 
-    public function removeFriend(int $friendId): JsonResponse
+    /**
+     * @throws ModelNotFoundException
+     */
+    public function removeFriend(int $id): JsonResponse
     {
-        $success = $this->userFriendService->removeFriend($friendId);
+        $friends = $this->userFriendService->removeFriend($id);
         return response()->json([
-            'status' => $success,
-                'message' => $success ? 'Přítel odebrán.' : 'Odebrání přítele se nezdařilo.',
+            'status' => true,
+            'message' => 'Přítel odebrán.',
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 
-    public function acceptFriend(int $friendId): JsonResponse
+    /**
+     * @throws ModelNotFoundException
+     */
+    public function acceptFriendRequest(int $friendId): JsonResponse
     {
-        $success = $this->userFriendService->acceptFriendRequest($friendId);
+        $friends = $this->userFriendService->acceptFriendRequest($friendId);
         return response()->json([
-            'status' => $success,
-                'message' => $success ? 'Žádost o přátelství přijata.' : 'Přijetí žádosti o přátelství se nezdařilo.',
+            'status' => true,
+            'message' => 'Žádost o přátelství byla přijata.',
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 
-    public function rejectFriend(int $friendId): JsonResponse
+    public function declineFriendRequest(int $friendId): JsonResponse
     {
-        $success = $this->userFriendService->rejectFriendRequest($friendId);
+        $friends = $this->userFriendService->declineFriendRequest($friendId);
         return response()->json([
-            'status' => $success,
-            'message' => $success ? 'Žádost o přátelství zamítnuta.' : 'Odmítnutí žádosti o přátelství se nezdařilo.',
+            'status' => true,
+            'message' => 'Žádost o přátelství byla zamítnuta.',
+            'data' => [
+                'friends' => UserFriendResource::collection($this->userFriendService->getFriends()),
+                'friendRequests' => UserFriendResource::collection($this->userFriendService->getFriendRequests()),
+                'pendingFriendRequests' => UserFriendResource::collection($this->userFriendService->getPendingFriendRequests())
+            ]
         ]);
     }
 }

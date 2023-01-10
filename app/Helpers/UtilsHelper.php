@@ -116,12 +116,24 @@ class UtilsHelper {
         return self::getResponse($message, 403);
     }
 
-    public static function notFoundResponseJson($message = 'Not found') {
+    public static function notFoundResponseJson($message = 'Nenalezeno. NotFoundResponseJson') {
+        return self::getResponse($message, 404);
+    }
+
+    public static function modelNotFoundException($message = 'Model nenalezen') {
+        return self::getResponse($message, 404);
+    }
+
+    public static function notFoundHttpException($message = 'Nenalezeno. NotFoundHttpException') {
         return self::getResponse($message, 404);
     }
 
     public static function userAlreadyHasGameResponseJson($message = 'Už tuto hru přidanou máte') {
         return self::getResponse('Už tuto hru máte přidanou.', 409);
+    }
+
+    public static function modelDuplicateFoundException($message = 'Duplicitní záznam') {
+        return self::getResponse($message, 409);
     }
 
     public static function duplicateObjectJson() {

@@ -17,19 +17,19 @@ return new class extends Migration
         Schema::create('user_achievements_status', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('title');
             $table->timestamps();
         });
 
         DB::table('user_achievements_status')->insert([
-            ['name' => 'created', 'description' => 'Úspěch vytvořen'],
-            ['name' => 'in_progress', 'description' => 'Úspěch v průběhu'],
-            ['name' => 'completed', 'description' => 'Úspěch splněn'],
+            ['name' => 'created', 'title' => 'Úspěch vytvořen'],
+            ['name' => 'in_progress', 'title' => 'Úspěch v průběhu'],
+            ['name' => 'completed', 'title' => 'Úspěch splněn'],
 
-            ['name' => 'waiting_for_check', 'description' => 'Čeká na kontrolu'],
-            ['name' => 'checked', 'description' => 'Kontrola dokončena'],
-            ['name' => 'rejected', 'description' => 'Odmítnuto'],
-            ['name' => 'accepted', 'description' => 'Přijato'],
+            ['name' => 'waiting_for_check', 'title' => 'Čeká na kontrolu'],
+            ['name' => 'checked', 'title' => 'Kontrola dokončena'],
+            ['name' => 'rejected', 'title' => 'Odmítnuto'],
+            ['name' => 'accepted', 'title' => 'Přijato'],
         ]);
     }
 

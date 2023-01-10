@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\NotFoundException;
 use App\Http\Resources\UserResource;
 use App\Models\Services\UserService;
 use Illuminate\Http\JsonResponse;
@@ -38,6 +39,19 @@ class UserController extends Controller
             'status' => true,
             'message' => 'User Details',
             'data' => UserResource::collection($users)
+        ]);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function findUserByNickname(string $nickname): JsonResponse
+    {
+        $user = $this->userService->findUserByNickname($nickname);
+        return response()->json([
+            'status' => true,
+            'message' => 'User Details',
+            'data' => $user
         ]);
     }
 

@@ -1,0 +1,90 @@
+### Log in first
+POST {{host}}/auth/login?email={{email}}&password={{password}}
+Accept: application/json
+Cache-Control: no-cache
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+   client.global.set("token", response.body["data"]);
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### All user friends
+GET {{host}}/user-friends
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### add friend
+POST {{host}}/user-friends/add/7
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### remove friend
+POST {{host}}/user-friends/remove/7
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### All user friends
+GET {{host}}/user-friends/requests
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### accept friend request
+POST {{host}}/user-friends/accept/5
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### accept friend request
+POST {{host}}/user-friends/decline/5
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+client.test("Request executed successfully", function() {
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}

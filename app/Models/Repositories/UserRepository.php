@@ -3,6 +3,7 @@
 namespace App\Models\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserRepository
@@ -14,6 +15,15 @@ class UserRepository
     public function getUserById(int $userId): User
     {
         return User::where('id', $userId)->first();
+    }
+
+    /**
+     * @param string $nickname
+     * @return User|null
+     */
+    public function findUserByNickname(string $nickname): User|null
+    {
+        return User::where('nickname', $nickname)->first() ?? null;
     }
 
     /**
