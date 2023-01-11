@@ -19,7 +19,7 @@ build_image:
     - cp $MOUNT_SRC/composer.json composer.json
     - cp $MOUNT_SRC/composer.lock composer.lock
     - cp $MOUNT_SRC/phpunit.xml phpunit.xml
-    - cp $MOUNT_SRC/server.php server.php
+    #- cp $MOUNT_SRC/server.php server.php
     # print mount
     - cd $CI_PROJECT_DIR/server/$DOCKER_IMAGE_NAME/src
     - ls -la
