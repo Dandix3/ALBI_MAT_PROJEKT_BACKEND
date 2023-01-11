@@ -1,0 +1,29 @@
+build_image:
+  before_script:
+    # clean up
+    - rm -rf $CI_PROJECT_DIR/server/$DOCKER_IMAGE_NAME/src
+    # mount cache
+    - export MOUNT_DIRS="vendor"
+    - export MOUNT_SRC=$CACHE_DIR
+    - export MOUNT_DEST=$CI_PROJECT_DIR/backend
+    - /tools/utils/mount.sh
+    # mount src dirs
+    - export MOUNT_DIRS="app bootstrap config database keys lang public resources routes storage server tests vendor"
+    - export MOUNT_SRC=$CI_PROJECT_DIR/backend
+    - export MOUNT_DEST=$CI_PROJECT_DIR/server/$DOCKER_IMAGE_NAME/src
+    - /tools/utils/mount.sh
+    # copy rest of files
+    - cd $CI_PROJECT_DIR/server/$DOCKER_IMAGE_NAME/src
+    - cp $MOUNT_SRC/.env.$CI_COMMIT_BRANCH .env
+    - cp $MOUNT_SRC/artisan artisan
+    - cp $MOUNT_SRC/composer.json composer.json
+    - cp $MOUNT_SRC/composer.lock composer.lock
+    - cp $MOUNT_SRC/phpunit.xml phpunit.xml
+    - cp $MOUNT_SRC/server.php server.php
+    # print mount
+    - cd $CI_PROJECT_DIR/server/$DOCKER_IMAGE_NAME/src
+    - ls -la
+    - ls -la vendor
+    # set tag to current date
+    - export DOCKER_IMAGE_TAG=$CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+#    - export DOCKER_IMAGE_TAG=$CI_COMMIT_BRANCH-$(date +'%F')

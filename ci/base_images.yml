@@ -1,0 +1,65 @@
+build_base_php:
+  stage: build_base
+  rules:
+    - changes:
+        - server/php_base/**
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH'
+      when: manual
+      allow_failure: true
+  variables:
+    DOCKER_IMAGE_NAME: "php_base"
+    DOCKER_IMAGE_TAG: $CI_COMMIT_BRANCH
+  trigger:
+    include:
+      - project: 'og-soft/gitlab-ci'
+        ref: 'master'
+        file: '/docker/build.yml'
+    strategy: depend
+  needs: [ ]
+
+
+build_base_apache:
+  stage: build_base
+  rules:
+    - changes:
+        - server/apache_base/**
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH'
+      when: manual
+      allow_failure: true
+  variables:
+    DOCKER_IMAGE_NAME: "apache_base"
+    DOCKER_IMAGE_TAG: "$CI_COMMIT_BRANCH"
+  trigger:
+    include:
+      - project: 'og-soft/gitlab-ci'
+        ref: 'master'
+        file: '/docker/build.yml'
+    strategy: depend
+  needs: [ ]
+
+build_base_composer:
+  stage: build_base_2
+  variables:
+    DOCKER_IMAGE_NAME: "composer"
+    DOCKER_IMAGE_TAG: $CI_COMMIT_BRANCH
+    DOCKER_BUILD_PARAMS: "--build-arg TAG=$CI_COMMIT_BRANCH"
+  rules:
+    - changes:
+        - server/composer/**
+        - server/php_base/**
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_COMMIT_BRANCH'
+      when: manual
+      allow_failure: true
+  trigger:
+    include:
+      - project: 'og-soft/gitlab-ci'
+        ref: 'master'
+        file: '/docker/build.yml'
+    strategy: depend
+  needs: ['build_base_php']

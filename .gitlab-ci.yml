@@ -1,0 +1,169 @@
+variables:
+  CI_PROJECT_NAME: "albi-hry-backend"
+  CI_REGISTRY: "test.docker.og:5000"
+  DOCKER_BUILD_PARAMS: ""
+  IMAGE_BASE_NAME: "$CI_PROJECT_NAME"
+  CACHE_DIR: "/storage/$CI_PROJECT_NAME/$CI_COMMIT_REF_NAME"
+  DOCKER_IMAGE_TAG: $CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA
+  # optimalizace
+  DOCKER_DRIVER: overlay2
+
+stages:
+  - build_base
+  - build_base_2
+  - composer
+  - build_prod
+  - deploy
+
+
+before_script:
+  # env init
+  - source $CI_PROJECT_DIR/ci/.env.${CI_COMMIT_BRANCH}
+  - echo $SWARM_APACHE_PORT
+  - echo $SWARM_APACHE_SSL_PORT
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "stable"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "test"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: always
+    - when: never
+
+
+.build_image: &build_image
+  trigger:
+    include:
+      - project: 'og-soft/gitlab-ci'
+        ref: 'master'
+        file: /docker/build.yml
+      - local: /ci/build_image.yml
+    strategy: depend
+
+
+.mount_cache: &mount_cache
+  - export MOUNT_DIRS="vendor"
+  - export MOUNT_SRC=$CACHE_DIR
+  - export MOUNT_DEST=$CI_PROJECT_DIR/backend
+  - cd backend
+  - /tools/utils/mount.sh
+  - cp .env.$CI_COMMIT_BRANCH .env
+
+
+include:
+  - '/ci/base_images.yml'
+
+
+composer_install:
+  image: $CI_REGISTRY/$IMAGE_BASE_NAME-composer:$CI_COMMIT_BRANCH
+  stage: composer
+  rules:
+    - changes:
+        - composer.json
+        - composer.lock
+    - exists:
+        - '$CACHE_DIR/vendor/'
+      when: manual
+      allow_failure: true
+    - if: '$CI_COMMIT_BRANCH'
+  before_script:
+    - *mount_cache
+  script:
+    - composer install --optimize-autoloader
+
+
+build_apache:
+  stage: build_prod
+  <<: *build_image
+  variables:
+    DOCKER_IMAGE_NAME: "apache_prod"
+    DOCKER_BUILD_PARAMS: "--build-arg SRC_DIR=src/  --build-arg TAG=$CI_COMMIT_BRANCH"
+
+
+build_app_image:
+  stage: build_prod
+  <<: *build_image
+  variables:
+    DOCKER_IMAGE_NAME: "php_prod"
+    DOCKER_BUILD_PARAMS: "--build-arg SRC_DIR=src/  --build-arg TAG=$CI_COMMIT_BRANCH"
+  needs:
+    - composer_install
+
+build_migrations:
+  stage: build_prod
+  image:
+    name: $CI_REGISTRY/$IMAGE_BASE_NAME-php_prod:latest-$CI_COMMIT_BRANCH
+    #entrypoint: ["/bin/sh", "-c"]
+  before_script:
+    - echo "Should set maintenance mode"
+  script:
+    - cd /var/www/html && ls -l
+    - php artisan migrate --force
+  needs: [ "build_app_image" ]
+  interruptible: true
+  allow_failure: true
+
+backend_images_test:
+  stage: deploy
+  image: docker:git
+  needs:
+    - build_apache
+    - build_app_image
+  script:
+    - docker pull ${CI_REGISTRY}/${CI_PROJECT_NAME}-php_prod:${DOCKER_IMAGE_TAG}
+    - docker pull ${CI_REGISTRY}/${CI_PROJECT_NAME}-apache_prod:${DOCKER_IMAGE_TAG}
+  retry: 2
+
+backend_deploy:
+  stage: deploy
+  image: docker:git
+  when: manual
+  variables:
+    NFS_DIR: /nfs/storage1/${CI_PROJECT_NAME}/${CI_COMMIT_BRANCH}
+  needs:
+    - backend_images_test
+  script:
+    - /tools/utils/ssh_swarm.sh master
+    # nastaveni STACK promennych
+    - export SWARM_STACK=/nfs/stacks/stable/available/${CI_PROJECT_NAME}_${CI_COMMIT_BRANCH}_backend_stack.yml
+    - export SWARM_STACK_ENABLED=/nfs/stacks/stable/enabled/${CI_PROJECT_NAME}_${CI_COMMIT_BRANCH}_backend_stack.yml
+    # procisteni redisu - redis-cli FLUSHALL
+    #    - ./tools/utils/swarm_run_all.sh medis_test_redis "redis-cli FLUSHALL"
+    - echo $SWARM_STACK
+    - echo $NFS_DIR
+    - scp $CI_PROJECT_DIR/server/swarm.backend.yml swarm:${SWARM_STACK}
+    #    - ssh swarm docker stack rm medis_${CI_COMMIT_BRANCH}
+    # procisteni cache
+    #    - ssh swarm "cd ${NFS_DIR}/app/temp && rm -rf ./*"
+    # vytvoreni potencionalne chybejicich slozek
+    - ssh swarm mkdir -p "${NFS_DIR}/log/apache"
+    - ssh swarm mkdir -p "${NFS_DIR}/log/app"
+    - ssh swarm mkdir -p "${NFS_DIR}/log/horizon"
+    - ssh swarm mkdir -p "${NFS_DIR}/log/cron"
+    - ssh swarm mkdir -p "${NFS_DIR}/log/laravel"
+    - ssh swarm mkdir -p "${NFS_DIR}/volumes"
+
+    # přidání práv
+    - ssh swarm "cd ${NFS_DIR}/log && chmod 0777 . -R"
+    - ssh swarm "cd ${NFS_DIR}/volumes && chmod 0777 . -R"
+
+    # nahrazeni spravneho tagu v stack.yml
+    - ssh swarm "sed -i 's/__TAG__/${DOCKER_IMAGE_TAG}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__BRANCH__/${CI_COMMIT_BRANCH}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__PROJ__/${CI_PROJECT_NAME}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__CONSTRAINTS__/${SWARM_PLACEMENT_CONSTRAINS}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__APACHE_PORT__/${SWARM_APACHE_PORT}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__APACHE_SSL_PORT__/${SWARM_APACHE_SSL_PORT}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__URL__/${SWARM_URL}/' ${SWARM_STACK}"
+    - ssh swarm "sed -i 's/__TLS__/${SWARM_TLS}/' ${SWARM_STACK}"
+    - ssh swarm "cat ${SWARM_STACK}"
+    # deploy
+    - ssh swarm "docker stack deploy --prune -c ${SWARM_STACK} ${CI_PROJECT_NAME}_${CI_COMMIT_BRANCH}_backend"
+    # symlink pro Nagios
+    - ssh swarm "ln -sfn ${SWARM_STACK} ${SWARM_STACK_ENABLED}"
