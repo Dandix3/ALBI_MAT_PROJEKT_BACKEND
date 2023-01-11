@@ -15,15 +15,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'api/v1/*'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => ['*', 'http://localhost:56311'],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => ['Google\\'],
 
-    'allowed_headers' => ['*'],
+    'allowed_headers' => ['X-Custom-Header', 'Upgrade-Insecure-Requests', '*'],
 
     'exposed_headers' => [],
 
