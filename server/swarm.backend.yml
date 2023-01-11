@@ -33,6 +33,35 @@ services:
       placement:
         constraints: __CONSTRAINTS__
 
+  db:
+    image: percona/percona-server:8
+    networks:
+      - backend
+    ports:
+      - 9806:3306
+    volumes:
+      - /nfs/storage1/__PROJ__/__BRANCH__/volumes/mysql/:/var/lib/mysql
+      - /nfs/storage1/__PROJ__/__BRANCH__/log/mysql/:/var/log/mysql
+      - /nfs/storage1/__PROJ__/__BRANCH__/config/mysql/:/etc/my.cnf.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pass_danda
+      - MYSQL_DATABASE=albi
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      # superuser access for ssp_devel
+      - MYSQL_USER=albi_hry
+      - MYSQL_PASSWORD=albi_hry
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: '2.5G'
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints: __CONSTRAINTS__
+
   proxy:
     image: jwilder/whoami
     networks:
