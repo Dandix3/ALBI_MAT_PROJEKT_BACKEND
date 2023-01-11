@@ -19,6 +19,7 @@ COPY $SRC_DIR .
 
 # vygeneruje cache pro konfiguraci
 RUN php artisan config:cache
+RUN php artisan config:clear
 RUN php artisan route:cache
 RUN php artisan view:cache
 
