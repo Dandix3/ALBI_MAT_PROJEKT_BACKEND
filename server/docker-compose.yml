@@ -1,0 +1,42 @@
+version: "3.4"
+services:
+
+    apache:
+        image: test.docker.og:5000/${PROJECT_NAME}-apache_base:master
+#        build:
+#            context: './apache_base/'
+        depends_on:
+            - app
+        networks:
+            - frontend
+            - backend
+        ports:
+            - ${APACHE_PORT}:80
+        volumes:
+            - ${PROJECT_DIR}/:/var/www/html/
+            - ${LOG_DIR}/:/var/log/
+        container_name: ${PROJECT_NAME}_apache
+        restart: "no"
+
+    app:
+        image: test.docker.og:5000/${PROJECT_NAME}-php_base:master
+#        build:
+#            context: './php_base/'
+        user: "${DOCKER_USER}"
+        networks:
+            - backend
+        volumes:
+            - ${PROJECT_DIR}/:/var/www/html/
+            - ${LOG_DIR}/php/:/var/log/
+        environment:
+            #      timto si lze prepnout prostred .env....
+            APP_ENV: ${APP_ENV}
+            CONTAINER_ROLE: app
+        container_name: ${PROJECT_NAME}_app
+        restart: "no"
+
+networks:
+    frontend:
+        driver: bridge
+    backend:
+        driver: bridge

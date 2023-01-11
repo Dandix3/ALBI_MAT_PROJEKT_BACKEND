@@ -1,0 +1,53 @@
+version: "3.4"
+
+services:
+  app:
+    image: test.docker.og:5000/__PROJ__-php_prod:__TAG__
+    networks:
+      - backend
+    volumes:
+      - /nfs/storage1/__PROJ__/__BRANCH__/log/app/:/var/log/
+      # logy pro automaticke sbirani do graylogu
+      - /nfs/storage1/__PROJ__/__BRANCH__/log/laravel/:/var/www/html/storage/logs/gelf
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: any
+      placement:
+        constraints: __CONSTRAINTS__
+
+  apache:
+    image: test.docker.og:5000/__PROJ__-apache_prod:__TAG__
+    networks:
+      - backend
+    ports:
+      - __APACHE_PORT__:80
+    volumes:
+      - /nfs/storage1/__PROJ__/__BRANCH__/log/apache/:/var/log/
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: any
+      placement:
+        constraints: __CONSTRAINTS__
+
+  proxy:
+    image: jwilder/whoami
+    networks:
+      - routable
+    deploy:
+      labels:
+        caddy: __URL__
+        caddy.reverse_proxy: 10.255.254.40:__APACHE_PORT__
+        caddy.tls: __TLS__
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  backend:
+    driver: overlay
+  routable:
+    external: true
