@@ -22,7 +22,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 RUN install-php-extensions bcmath
 # API dep
 # !!! PHP KNIHOVNY VKLADAT ZDE !!!
-RUN install-php-extensions redis soap calendar imagick gd intl sockets pcntl zip sqlsrv pdo_sqlsrv
+RUN install-php-extensions pdo_mysql redis pcntl
 
 # CLEAN
 RUN apt-get autoremove -y
