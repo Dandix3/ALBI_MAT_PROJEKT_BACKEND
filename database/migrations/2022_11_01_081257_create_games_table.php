@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('games', function (Blueprint $table) {
-            $table->integer('ksp')->unique()->primary();
+            $table->id('ksp');
             $table->string('name');
             $table->bigInteger('EAN')->nullable();
             $table->string('klp')->nullable();

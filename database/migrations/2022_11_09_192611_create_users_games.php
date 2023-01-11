@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('users_games', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('game_id')->constrained('games')->onDelete('cascade');
+            $table->foreignId('game_id')->constrained('games', 'ksp')->onDelete('cascade');
             $table->timestamps();
         });
     }
