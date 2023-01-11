@@ -51,7 +51,6 @@ workflow:
   - export MOUNT_DIRS="vendor"
   - export MOUNT_SRC=$CACHE_DIR
   - export MOUNT_DEST=$CI_PROJECT_DIR
-  - cd backend
   - /tools/utils/mount.sh
   - cp .env.$CI_COMMIT_BRANCH .env
 
