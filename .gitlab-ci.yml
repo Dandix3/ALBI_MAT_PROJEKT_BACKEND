@@ -122,7 +122,6 @@ backend_images_test:
 backend_deploy:
   stage: deploy
   image: docker:git
-  when: manual
   variables:
     NFS_DIR: /nfs/storage1/${CI_PROJECT_NAME}/${CI_COMMIT_BRANCH}
   needs:
