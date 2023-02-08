@@ -33,6 +33,20 @@ class GameAchievementsSeader extends Seeder
             ]);
             $ach->next_achievement = $ach2->id;
             $ach->save();
+
+            $ach = Achievement::create([
+                'game_id' => $game->ksp,
+                'title' => 'Počet vyhraných her',
+                'description' => 'Počet vyhraných her',
+                'max_points' => 10,
+            ]);
+
+            $ach = Achievement::create([
+                'game_id' => $game->ksp,
+                'title' => 'Získej všechny karty',
+                'description' => 'Získej všechny karty - SPECIAL',
+                'max_points' => 1,
+            ]);
         });
     }
 }
