@@ -18,21 +18,21 @@ class GameAchievementsSeader extends Seeder
     public function run()
     {
         Game::all()->each(function ($game) {
-            $ach = Achievement::create([
-                'game_id' => $game->ksp,
-                'title' => 'Počet odehraných her',
-                'description' => 'Počet odehraných her',
-                'max_points' => 10,
-            ]);
-            $ach2 = Achievement::create([
-                'game_id' => $game->ksp,
-                'title' => 'Počet odehraných her',
-                'description' => 'Počet odehraných her',
-                'min_points' => 10,
-                'max_points' => 30,
-            ]);
-            $ach->next_achievement = $ach2->id;
-            $ach->save();
+//            $ach = Achievement::create([
+//                'game_id' => $game->ksp,
+//                'title' => 'Počet odehraných her',
+//                'description' => 'Počet odehraných her',
+//                'max_points' => 10,
+//            ]);
+//            $ach2 = Achievement::create([
+//                'game_id' => $game->ksp,
+//                'title' => 'Počet odehraných her',
+//                'description' => 'Počet odehraných her',
+//                'min_points' => 10,
+//                'max_points' => 30,
+//            ]);
+//            $ach->next_achievement = $ach2->id;
+//            $ach->save();
 
             $ach = Achievement::create([
                 'game_id' => $game->ksp,
