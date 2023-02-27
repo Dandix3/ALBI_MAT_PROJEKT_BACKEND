@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\NotFoundException;
-use App\Http\Requests\CreateClubRequest;
+use App\Http\Requests\club\AddMembersToClubRequest;
+use App\Http\Requests\club\CreateClubRequest;
+use App\Http\Requests\club\FindNearestClubRequest;
+use App\Http\Requests\club\UpdateClubRequest;
 use App\Http\Resources\ClubResource;
-use App\Http\Resources\UserResource;
-use App\Models\ClubMember;
+use App\Models\Services\ClubMemberService;
 use App\Models\Services\ClubService;
-use App\Models\Services\UserService;
 use Illuminate\Http\JsonResponse;
 
 class ClubController extends Controller
@@ -20,10 +21,12 @@ class ClubController extends Controller
     }
 
     protected ClubService $clubService;
+    protected ClubMemberService $clubMemberService;
 
     public function __construct()
     {
         $this->clubService = new ClubService();
+        $this->clubMemberService = new ClubMemberService();
     }
 
     public function getClub(int $id): JsonResponse
@@ -46,9 +49,10 @@ class ClubController extends Controller
         ]);
     }
 
-    public function getNearestClubs(float $lat, float $lng): JsonResponse
+    public function getNearestClubs(FindNearestClubRequest $request): JsonResponse
     {
-        $clubs = $this->clubService->getNearestClubs($lat, $lng);
+        $data = $request->validated();
+        $clubs = $this->clubService->getNearestClubs($data['lat'], $data['lng']);
         return response()->json([
             'status' => true,
             'message' => 'Nearest Clubs',
@@ -65,6 +69,92 @@ class ClubController extends Controller
             'status' => true,
             'message' => 'Club created',
             'data' => ClubResource::make($club),
+        ]);
+    }
+
+    public function updateClub(int $id, UpdateClubRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $club = $this->clubService->updateClub($id, $data);
+        return response()->json([
+            'status' => true,
+            'message' => 'Club updated',
+            'data' => ClubResource::make($club),
+        ]);
+    }
+
+    public function deleteClub(int $id): JsonResponse
+    {
+        $this->clubService->deleteClub($id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Club deleted',
+        ]);
+    }
+
+    public function joinClub(int $id): JsonResponse
+    {
+        $this->clubMemberService->joinClub($id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Club joined',
+        ]);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function leaveClub(int $id): JsonResponse
+    {
+        $this->clubMemberService->leaveClub($id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Club left',
+        ]);
+    }
+
+    public function removeMember(int $id, int $memberId): JsonResponse
+    {
+        $this->clubMemberService->removeMember($id, $memberId);
+        return response()->json([
+            'status' => true,
+            'message' => 'Member removed',
+        ]);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function addMembers(int $id, AddMembersToClubRequest $request): JsonResponse
+    {
+        $requestVal = $request->validated()['members'];
+        $members = json_decode($requestVal['user_ids'], true);
+        $this->clubMemberService->addMembers($id, $members);
+        return response()->json([
+            'status' => true,
+            'message' => 'Members added',
+        ]);
+    }
+
+    /**
+     * @throws NotFoundException
+     */
+    public function acceptMember(int $id, int $memberId): JsonResponse
+    {
+        $this->clubMemberService->acceptMember($id, $memberId);
+        return response()->json([
+            'status' => true,
+            'message' => 'Member accepted',
+        ]);
+    }
+
+    public function declineMember(int $id, int $memberId): JsonResponse
+    {
+        $this->clubMemberService->rejectMember($id, $memberId);
+        return response()->json([
+            'status' => true,
+            'message' => 'Member declined',
         ]);
     }
 }

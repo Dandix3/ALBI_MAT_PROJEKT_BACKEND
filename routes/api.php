@@ -3,6 +3,7 @@
 use App\Http\Controllers\AchievementActionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\ClubController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserFriendController;
@@ -131,6 +132,32 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function () {
             Route::get('/', [$controller, 'getAchievementActions'])->name($endPoint. '.actions');
             Route::post('/ack/{id}', [$controller, 'ackUserAchievement'])->name($endPoint. '.ack');
             Route::post('/reject/{id}', [$controller, 'rejectUserAchievement'])->name($endPoint. '.reject');
+        });
+
+
+        /**
+         * Club endpoints
+         */
+        $endPoint = ClubController::getEndpointUrl();
+        $controller = ClubController::class;
+
+        Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/', [$controller, 'getAllClubs'])->name($endPoint. '.clubs');
+            Route::get('/{id}', [$controller, 'getClub'])->name($endPoint. '.club');
+            Route::get('/nearby', [$controller, 'getNearestClubs'])->name($endPoint. '.nearby');
+
+
+            Route::post('/{id}/remove/{member}', [$controller, 'removeMember'])->name($endPoint. '.remove');
+            Route::post('/{id}/accept/{id}', [$controller, 'acceptClubInvite'])->name($endPoint. '.accept');
+            Route::post('/{id}/decline/{id}', [$controller, 'declineClubInvite'])->name($endPoint. '.decline');
+
+            Route::post('/invite', [$controller, 'addMembers'])->name($endPoint. '.invite');
+            Route::post('/join/{id}', [$controller, 'joinClub'])->name($endPoint. '.join');
+            Route::post('/leave/{id}', [$controller, 'leaveClub'])->name($endPoint. '.leave');
+
+            Route::post('/', [$controller, 'createClub'])->name($endPoint. '.create');
+            Route::put('/{id}', [$controller, 'updateClub'])->name($endPoint. '.update');
+            Route::delete('/{id}', [$controller, 'deleteClub'])->name($endPoint. '.delete');
         });
 
     });

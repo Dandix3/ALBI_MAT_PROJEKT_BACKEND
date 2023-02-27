@@ -8,34 +8,36 @@ use App\Models\ClubMember;
 use App\Models\Repositories\ClubRepository;
 use App\Models\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
-use Nette\Schema\ValidationException;
 
 class ClubMemberService
 {
+    protected ClubRepository $clubRepository;
+    protected UserRepository $userRepository;
     public function __construct(
-        protected ClubRepository $clubRepository,
-        protected UserRepository $userRepository,
     ) {
+        $this->clubRepository = new ClubRepository();
+        $this->userRepository = new UserRepository();
     }
 
-    public function addMember(int $clubId, int $userId): ClubMember
+    public function addMembers(int $clubId, array $members): Club
     {
         $club = $this->clubRepository->getClub($clubId)->first();
         if (!$club) {
             throw new NotFoundException('Club not found');
         }
-        $user = $this->userRepository->getUserById($userId)->first();
-        if (!$user) {
-            throw new NotFoundException('User not found');
+        foreach ($members as $member) {
+            $user = $this->userRepository->getUserById($member);
+            if (!$user) {
+                throw new NotFoundException('User not found');
+            }
+            $newMember = new ClubMember();
+            $newMember->club_id = $clubId;
+            $newMember->user_id = $member;
+            $newMember->setMember();
+            $newMember->save();
         }
 
-        $newMember = new ClubMember();
-        $newMember->club_id = $clubId;
-        $newMember->user_id = $userId;
-        $newMember->role = 1; //member
-        $newMember->save();
-
-        return $newMember;
+        return $club;
     }
 
     public function joinClub(int $clubId): ClubMember
@@ -106,7 +108,7 @@ class ClubMemberService
             throw new NotFoundException('Member not found');
         }
 
-        $member->role = 2; //admin
+        $member->setAdmin();
         $member->save();
 
         return $member;
@@ -128,10 +130,50 @@ class ClubMemberService
             throw new NotFoundException('Member not found');
         }
 
-        $member->role = 1; //member
+        $member->setMember(); //member
         $member->save();
 
         return $member;
     }
 
+    public function acceptMember(int $clubId, int $userId): ClubMember
+    {
+        $club = $this->clubRepository->getClub($clubId)->first();
+        if (!$club) {
+            throw new NotFoundException('Club not found');
+        }
+        $user = $this->userRepository->getUserById($userId)->first();
+        if (!$user) {
+            throw new NotFoundException('User not found');
+        }
+
+        $member = ClubMember::where('club_id', $clubId)->where('user_id', $userId)->first();
+        if (!$member) {
+            throw new NotFoundException('Member not found');
+        }
+
+        $member->setMember();
+        $member->save();
+
+        return $member;
+    }
+
+    public function rejectMember(int $clubId, int $userId): void
+    {
+        $club = $this->clubRepository->getClub($clubId)->first();
+        if (!$club) {
+            throw new NotFoundException('Club not found');
+        }
+        $user = $this->userRepository->getUserById($userId)->first();
+        if (!$user) {
+            throw new NotFoundException('User not found');
+        }
+
+        $member = ClubMember::where('club_id', $clubId)->where('user_id', $userId)->first();
+        if (!$member) {
+            throw new NotFoundException('Member not found');
+        }
+
+        $member->delete();
+    }
 }

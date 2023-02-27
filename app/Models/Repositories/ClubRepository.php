@@ -37,6 +37,7 @@ class ClubRepository
      */
     public function getNearestClubs(float $lat, float $lng, int $limit = 10, int $radius = 1000): Collection
     {
+        //radius je v kilometrech
         return Club::query()
             ->selectRaw('*, ( 6371 * acos( cos( radians(?) ) *
             cos( radians( lat ) )

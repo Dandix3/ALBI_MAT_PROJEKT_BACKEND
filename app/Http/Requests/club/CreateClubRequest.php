@@ -1,11 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\club;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule;
-use Illuminate\Contracts\Validation\Validator;
+use App\Http\Requests\AbstractGetRequest;
 
 class CreateClubRequest extends AbstractGetRequest
 {
@@ -18,7 +15,8 @@ class CreateClubRequest extends AbstractGetRequest
             'city' => 'required|string',
             'country' => 'required|string',
             'postal_code' => 'required|string',
-            'location' => 'required|string',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ];
     }
 
