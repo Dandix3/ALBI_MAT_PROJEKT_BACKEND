@@ -42,6 +42,7 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function () {
 
     Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
         Route::get('/nickname/{nickname}', [$controller, 'findUserByNickname'])->name($endPoint . '.nickname');
+        Route::get('/', [$controller, 'users'])->name($endPoint . '.users');
     });
 
 
@@ -77,7 +78,6 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function () {
         $controller = UserController::class;
 
         Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
-            Route::get('/', [$controller, 'users']);
             Route::get('/user', [$controller, 'user']);
             Route::get('/{id}', [$controller, 'getUser']);
         });
