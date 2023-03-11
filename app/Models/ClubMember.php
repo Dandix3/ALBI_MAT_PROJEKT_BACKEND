@@ -61,12 +61,12 @@ class ClubMember extends Authenticatable
         $this->role = self::ROLE_PENDING;
     }
 
-    public function isMember(): bool
+    public function isMemberRole(): bool
     {
         return $this->role === self::ROLE_MEMBER;
     }
 
-    public function setMember(): void
+    public function setMemberRole(): void
     {
         $this->role = self::ROLE_MEMBER;
     }

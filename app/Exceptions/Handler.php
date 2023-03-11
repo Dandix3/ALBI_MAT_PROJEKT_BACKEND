@@ -111,7 +111,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof ModelDuplicateFoundException) {
-            return UtilsHelper::modelDuplicateFoundException($exception);
+            return UtilsHelper::modelDuplicateFoundException($exception->getMessage());
         }
 
         if ($exception instanceof MethodNotAllowedHttpException) {

@@ -52,7 +52,7 @@ class ClubController extends Controller
     public function getNearestClubs(FindNearestClubRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $clubs = $this->clubService->getNearestClubs($data['lat'], $data['lng']);
+        $clubs = $this->clubService->getNearestClubs($data['lat'], $data['lng'], $data['radius'] ?? 1000, $data['limit'] ?? 10);
         return response()->json([
             'status' => true,
             'message' => 'Nearest Clubs',
@@ -72,6 +72,9 @@ class ClubController extends Controller
         ]);
     }
 
+    /**
+     * @throws NotFoundException
+     */
     public function updateClub(int $id, UpdateClubRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -128,7 +131,7 @@ class ClubController extends Controller
      */
     public function addMembers(int $id, AddMembersToClubRequest $request): JsonResponse
     {
-        $requestVal = $request->validated()['members'];
+        $requestVal = $request->validated();
         $members = json_decode($requestVal['user_ids'], true);
         $this->clubMemberService->addMembers($id, $members);
         return response()->json([

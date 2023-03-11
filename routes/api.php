@@ -142,16 +142,16 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function () {
         $controller = ClubController::class;
 
         Route::prefix($endPoint)->group(function () use ($endPoint, $controller) {
+            Route::get('/nearby', [$controller, 'getNearestClubs'])->name($endPoint. '.nearby');
             Route::get('/', [$controller, 'getAllClubs'])->name($endPoint. '.clubs');
             Route::get('/{id}', [$controller, 'getClub'])->name($endPoint. '.club');
-            Route::get('/nearby', [$controller, 'getNearestClubs'])->name($endPoint. '.nearby');
 
 
-            Route::post('/{id}/remove/{member}', [$controller, 'removeMember'])->name($endPoint. '.remove');
-            Route::post('/{id}/accept/{id}', [$controller, 'acceptClubInvite'])->name($endPoint. '.accept');
-            Route::post('/{id}/decline/{id}', [$controller, 'declineClubInvite'])->name($endPoint. '.decline');
+            Route::post('/{id}/remove/{memberId}', [$controller, 'removeMember'])->name($endPoint. '.remove');
+            Route::post('/{id}/accept/{memberId}', [$controller, 'acceptMember'])->name($endPoint. '.accept');
+            Route::post('/{id}/decline/{memberId}', [$controller, 'declineMember'])->name($endPoint. '.decline');
 
-            Route::post('/invite', [$controller, 'addMembers'])->name($endPoint. '.invite');
+            Route::post('/invite/{id}', [$controller, 'addMembers'])->name($endPoint. '.invite');
             Route::post('/join/{id}', [$controller, 'joinClub'])->name($endPoint. '.join');
             Route::post('/leave/{id}', [$controller, 'leaveClub'])->name($endPoint. '.leave');
 

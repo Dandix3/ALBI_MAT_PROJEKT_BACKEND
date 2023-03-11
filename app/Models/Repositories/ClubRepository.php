@@ -11,19 +11,19 @@ class ClubRepository
 {
     /**
      * @param int $id
-     * @return Collection|Model
+     * @return Builder
      */
-    public function getClub(int $id): Collection|Model
+    public function getClub(int $id): Builder
     {
-        return Club::query()->find($id);
+        return Club::query()->where('id', $id);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<Club>
+     * @return Builder
      */
-    public function all(): Collection
+    public function all(): Builder
     {
-        return Club::query()->get();
+        return Club::query();
     }
 
 
@@ -33,9 +33,9 @@ class ClubRepository
      * @param float $lng
      * @param int $limit
      * @param int $radius
-     * @return Collection
+     * @return Builder
      */
-    public function getNearestClubs(float $lat, float $lng, int $limit = 10, int $radius = 1000): Collection
+    public function getNearestClubs(float $lat, float $lng, int $radius = 1000, int $limit = 10): Builder
     {
         //radius je v kilometrech
         return Club::query()
@@ -47,7 +47,6 @@ class ClubRepository
             ) AS distance', [$lat, $lng, $lat])
             ->having('distance', '<', $radius)
             ->orderBy('distance')
-            ->limit($limit)
-            ->get();
+            ->limit($limit);
     }
 }

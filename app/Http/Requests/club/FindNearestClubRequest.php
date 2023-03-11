@@ -11,6 +11,8 @@ class FindNearestClubRequest extends AbstractGetRequest
         return [
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
+            'radius' => 'numeric',
+            'limit' => 'numeric',
         ];
     }
 
@@ -19,6 +21,10 @@ class FindNearestClubRequest extends AbstractGetRequest
         return [
             'lat.required' => 'Zeměpisná šířka je povinná.',
             'lng.required' => 'Zeměpisná délka je povinná.',
+            'lat.numeric' => 'Zeměpisná šířka musí být číslo.',
+            'lng.numeric' => 'Zeměpisná délka musí být číslo.',
+            'radius.numeric' => 'Rádius musí být číslo.',
+            'limit.numeric' => 'Limit musí být číslo.',
         ];
     }
 

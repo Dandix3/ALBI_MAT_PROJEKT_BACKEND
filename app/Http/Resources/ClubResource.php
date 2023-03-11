@@ -22,7 +22,8 @@ class ClubResource extends JsonResource
             'city' => $this->city,
             'country' => $this->country,
             'postal_code' => $this->postal_code,
-            'location' => $this->location,
+            'lat' => $this->lat,
+            'lng' => $this->lng,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

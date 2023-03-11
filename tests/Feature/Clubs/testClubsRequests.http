@@ -1,0 +1,129 @@
+### Log in first
+POST {{host}}/auth/login?email={{email}}&password={{password}}
+Accept: application/json
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+
+}
+
+> {%
+client.test("Request executed successfully", function() {
+   client.global.set("token", response.body["data"]);
+  client.assert(response.status === 200, "Response status is not 200");
+});
+%}
+
+### Search for Clubs
+GET {{host}}/clubs
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Create a Club
+POST {{host}}/clubs
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Test Club",
+    "description": "Test Club Description",
+    "lat": 0.5074,
+    "lng": 0.1278,
+    "address": "M. R. Štefanika 1",
+    "city": "Ústí nad Orlicí",
+    "country": "Czech Republic",
+    "postal_code": "56201"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Get a Club
+GET {{host}}/clubs/4
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Update a Club
+PUT {{host}}/clubs/4
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Test Club 2",
+    "description": "Test Club Description 1",
+    "lat": 51.5074,
+    "lng": 0.1278,
+    "address": "M. R. Štefanika 1",
+    "city": "Ústí nad Orlicí",
+    "country": "Czech Republic",
+    "postal_code": "56201"
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Delete a Club
+DELETE {{host}}/clubs/4
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### Search for Clubs nearby
+GET {{host}}/clubs/nearby
+Accept: application/json
+Cache-Control: no-cache
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "lat": 51.5074,
+    "lng": 0.1278,
+    "radius": 0,
+    "limit": 10
+}
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+
+
+
