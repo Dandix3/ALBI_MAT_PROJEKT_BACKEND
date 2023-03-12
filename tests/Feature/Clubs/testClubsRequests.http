@@ -114,7 +114,7 @@ Content-Type: application/json
 {
     "lat": 51.5074,
     "lng": 0.1278,
-    "radius": 0,
+    "radius": 10000,
     "limit": 10
 }
 

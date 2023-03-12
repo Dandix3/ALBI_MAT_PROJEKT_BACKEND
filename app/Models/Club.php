@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -63,9 +64,16 @@ class Club extends Authenticatable
         return $this->belongsTo('App\Models\User');
     }
 
-    public function members(): HasMany
+    public function members(): HasManyThrough
     {
-        return $this->hasMany('App\Models\ClubMember');
+        return $this->hasManyThrough(
+            'App\Models\User',
+            'App\Models\ClubMember',
+            'club_id',
+            'id',
+            'id',
+            'user_id'
+        );
     }
 
 }
