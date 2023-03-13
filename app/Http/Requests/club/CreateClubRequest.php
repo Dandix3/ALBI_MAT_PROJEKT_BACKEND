@@ -13,7 +13,7 @@ class CreateClubRequest extends AbstractGetRequest
             'description' => 'required|string',
             'address' => 'required|string',
             'city' => 'required|string',
-            'country' => 'string',
+            'country' => 'string|nullable',
             'postal_code' => 'required|numeric',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
