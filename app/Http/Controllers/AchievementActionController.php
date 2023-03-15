@@ -67,7 +67,8 @@ class AchievementActionController extends Controller
         return response()->json(
             [
                 "status" => true,
-                "message" => "Achievement action rejected."
+                "message" => "Achievement action rejected.",
+                "data" => AchievementActionResource::collection($this->achievementActionService->getAchievementActionsForUser()),
             ]
         );
     }
