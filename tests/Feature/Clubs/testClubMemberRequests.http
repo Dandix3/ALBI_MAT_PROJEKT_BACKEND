@@ -18,7 +18,7 @@ client.test("Request executed successfully", function() {
 %}
 
 ### Join in Club
-POST {{host}}/clubs/join/5
+POST {{host}}/clubs/join/6
 Accept: application/json
 Cache-Control: no-cache
 Authorization: Bearer {{token}}

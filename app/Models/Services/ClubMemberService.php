@@ -9,6 +9,7 @@ use App\Models\Club;
 use App\Models\ClubMember;
 use App\Models\Repositories\ClubRepository;
 use App\Models\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,6 +21,16 @@ class ClubMemberService
     ) {
         $this->clubRepository = new ClubRepository();
         $this->userRepository = new UserRepository();
+    }
+
+    public function getClubMembers(int $clubId): Collection
+    {
+        $club = $this->clubRepository->getClub($clubId)->first();
+        if (!$club) {
+            throw new NotFoundException('Club not found');
+        }
+        $members = $club->members()->get();
+        return $members;
     }
 
     public function addMembers(int $clubId, array $members): Model

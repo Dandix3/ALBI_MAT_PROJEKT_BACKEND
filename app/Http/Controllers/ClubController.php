@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ModelNotFoundException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\club\AddMembersToClubRequest;
 use App\Http\Requests\club\CreateClubRequest;
 use App\Http\Requests\club\FindNearestClubRequest;
 use App\Http\Requests\club\UpdateClubRequest;
+use App\Http\Resources\ClubMemberResource;
 use App\Http\Resources\ClubResource;
+use App\Models\ClubMember;
 use App\Models\Services\ClubMemberService;
 use App\Models\Services\ClubService;
 use Illuminate\Http\JsonResponse;
+use function Symfony\Component\Translation\t;
 
 class ClubController extends Controller
 {
@@ -96,12 +100,17 @@ class ClubController extends Controller
         ]);
     }
 
+    /**
+     * @throws NotFoundException
+     * @throws ModelNotFoundException
+     */
     public function joinClub(int $id): JsonResponse
     {
         $this->clubMemberService->joinClub($id);
         return response()->json([
             'status' => true,
             'message' => 'Club joined',
+            'data' => ClubMemberResource::collection($this->clubMemberService->getClubMembers($id)),
         ]);
     }
 
