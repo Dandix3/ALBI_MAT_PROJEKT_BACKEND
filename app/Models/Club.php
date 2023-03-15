@@ -64,16 +64,8 @@ class Club extends Authenticatable
         return $this->belongsTo('App\Models\User');
     }
 
-    public function members(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            'App\Models\User',
-            'App\Models\ClubMember',
-            'club_id',
-            'id',
-            'id',
-            'user_id'
-        );
+    public function members(): HasMany {
+        return $this->hasMany('App\Models\ClubMember');
     }
 
 }

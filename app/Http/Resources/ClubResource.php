@@ -17,7 +17,7 @@ class ClubResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'owner' => UserResource::make($this->owner),
-            'members' => UserResource::collection($this->members),
+            'members' => ClubMemberResource::collection($this->members),
             'address' => $this->address,
             'city' => $this->city,
             'country' => $this->country,
