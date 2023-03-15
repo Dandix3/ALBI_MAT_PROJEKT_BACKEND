@@ -56,7 +56,6 @@ class AchievementActionService
 
         if ($userAchievement->achievement()->first()->max_points === $userAchievement->points) {
             $userAchievement->setCompletedStatus();
-            throw new ModelNotFoundException('Našel jsem to');
         }
 
 
