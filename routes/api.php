@@ -147,9 +147,9 @@ Route::group(['middleware' => 'cors', 'prefix' => 'v1'], function () {
             Route::get('/{id}', [$controller, 'getClub'])->name($endPoint. '.club');
 
 
-            Route::post('/{id}/remove/{memberId}', [$controller, 'removeMember'])->name($endPoint. '.remove');
-            Route::post('/{id}/accept/{memberId}', [$controller, 'acceptMember'])->name($endPoint. '.accept');
-            Route::post('/{id}/decline/{memberId}', [$controller, 'declineMember'])->name($endPoint. '.decline');
+            Route::post('/remove/{id}', [$controller, 'removeMember'])->name($endPoint. '.remove');
+            Route::post('/accept/{id}', [$controller, 'acceptMember'])->name($endPoint. '.accept');
+            Route::post('/decline/{id}', [$controller, 'declineMember'])->name($endPoint. '.decline');
 
             Route::post('/invite/{id}', [$controller, 'addMembers'])->name($endPoint. '.invite');
             Route::post('/join/{id}', [$controller, 'joinClub'])->name($endPoint. '.join');

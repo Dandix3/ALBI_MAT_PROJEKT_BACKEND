@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ModelDuplicateFoundException;
 use App\Exceptions\ModelNotFoundException;
 use App\Exceptions\NotFoundException;
 use App\Http\Requests\club\AddMembersToClubRequest;
@@ -116,6 +117,7 @@ class ClubController extends Controller
 
     /**
      * @throws NotFoundException
+     * @throws ModelDuplicateFoundException
      */
     public function leaveClub(int $id): JsonResponse
     {
@@ -123,6 +125,7 @@ class ClubController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Club left',
+            'data' => ClubMemberResource::collection($this->clubMemberService->getClubMembers($id)),
         ]);
     }
 
@@ -132,6 +135,7 @@ class ClubController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Member removed',
+            'data' => ClubMemberResource::collection($this->clubMemberService->getClubMembers($id)),
         ]);
     }
 
@@ -152,12 +156,13 @@ class ClubController extends Controller
     /**
      * @throws NotFoundException
      */
-    public function acceptMember(int $id, int $memberId): JsonResponse
+    public function acceptMember(int $id): JsonResponse
     {
-        $this->clubMemberService->acceptMember($id, $memberId);
+        $this->clubMemberService->acceptMember($id);
         return response()->json([
             'status' => true,
             'message' => 'Member accepted',
+            'data' => ClubMemberResource::collection($this->clubMemberService->getClubMembers($id)),
         ]);
     }
 
@@ -167,6 +172,7 @@ class ClubController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Member declined',
+            'data' => ClubMemberResource::collection($this->clubMemberService->getClubMembers($id)),
         ]);
     }
 }

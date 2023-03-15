@@ -42,7 +42,7 @@ Content-Type: application/json
 }
 
 ### Leave club
-POST {{host}}/clubs/leave/5
+POST {{host}}/clubs/leave/6
 Accept: application/json
 Cache-Control: no-cache
 Authorization: Bearer {{token}}

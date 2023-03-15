@@ -63,7 +63,7 @@ class ClubMemberService
 
         $isMember = ClubMember::where('club_id', $clubId)->where('user_id', Auth::user()->id)->first();
         if ($isMember) {
-            throw new ModelNotFoundException('Už jsi členem klubu');
+            throw new ModelDuplicateFoundException('Už jsi členem klubu');
         }
 
         $user = Auth::user();
@@ -108,18 +108,9 @@ class ClubMemberService
         $member->delete();
     }
 
-    public function removeMember(int $clubId, int $userId): void
+    public function removeMember(int $id): void
     {
-        $club = $this->clubRepository->getClub($clubId)->first();
-        if (!$club) {
-            throw new NotFoundException('Club not found');
-        }
-        $user = $this->userRepository->getUserById($userId)->first();
-        if (!$user) {
-            throw new NotFoundException('User not found');
-        }
-
-        $member = ClubMember::where('club_id', $clubId)->where('user_id', $userId)->first();
+        $member = ClubMember::where('id', $id)->first();
         if (!$member) {
             throw new NotFoundException('Member not found');
         }
@@ -171,18 +162,12 @@ class ClubMemberService
         return $member;
     }
 
-    public function acceptMember(int $clubId, int $userId): ClubMember
+    /**
+     * @throws NotFoundException
+     */
+    public function acceptMember(int $id): ClubMember
     {
-        $club = $this->clubRepository->getClub($clubId)->first();
-        if (!$club) {
-            throw new NotFoundException('Club not found');
-        }
-        $user = $this->userRepository->getUserById($userId)->first();
-        if (!$user) {
-            throw new NotFoundException('User not found');
-        }
-
-        $member = ClubMember::where('club_id', $clubId)->where('user_id', $userId)->first();
+        $member = ClubMember::where('id', $id)->first();
         if (!$member) {
             throw new NotFoundException('Member not found');
         }
@@ -193,18 +178,12 @@ class ClubMemberService
         return $member;
     }
 
-    public function rejectMember(int $clubId, int $userId): void
+    /**
+     * @throws NotFoundException
+     */
+    public function rejectMember(int $id): void
     {
-        $club = $this->clubRepository->getClub($clubId)->first();
-        if (!$club) {
-            throw new NotFoundException('Club not found');
-        }
-        $user = $this->userRepository->getUserById($userId)->first();
-        if (!$user) {
-            throw new NotFoundException('User not found');
-        }
-
-        $member = ClubMember::where('club_id', $clubId)->where('user_id', $userId)->first();
+        $member = ClubMember::where('id', $id)->first();
         if (!$member) {
             throw new NotFoundException('Member not found');
         }
