@@ -19,6 +19,12 @@ class AuthController extends Controller
         return self::ENDPOINT;
     }
 
+    /**
+     * @lrd:start
+     * Hello markdown
+     * Free `code` or *text* to write documentation in markdown
+     * @lrd:end
+     */
     public function register(RegisterRequest $request): JsonResponse
     {
         Log::info('Registering user');
